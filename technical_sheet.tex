@@ -1,0 +1,399 @@
+\documentclass[11pt,a4paper]{article}
+\usepackage[utf8]{inputenc}
+\usepackage[T1]{fontenc}
+\usepackage{geometry}
+\usepackage{graphicx}
+\usepackage{hyperref}
+\usepackage{listings}
+\usepackage{xcolor}
+\usepackage{amsmath}
+
+\geometry{margin=2.5cm}
+
+\title{AI-Driven Distributed Fog Load Balancing \& Anomaly-Aware Routing\\
+Technical Specification}
+\author{Engineering Project}
+\date{\today}
+
+\begin{document}
+
+\maketitle
+
+\section{Project Overview}
+
+\subsection{Title}
+AI-Driven Distributed Fog Load Balancing \& Anomaly-Aware Routing
+
+\subsection{Objective}
+Implement a real distributed fog computing architecture demonstrating mastery of fog computing, networking protocols, and artificial intelligence through concrete implementation, measurable performance metrics, and architectural comparisons.
+
+\subsection{Key Requirements}
+\begin{itemize}
+    \item Real distributed fog computing architecture (not conceptual simulation)
+    \item Multiple fog nodes in distributed mesh topology
+    \item SDN-based dynamic routing (OpenFlow + Ryu)
+    \item AI components embedded in each fog node:
+    \begin{itemize}
+        \item LSTM for future load prediction
+        \item Autoencoder for network anomaly detection
+        \item Reinforcement Learning for intelligent routing decisions
+    \end{itemize}
+    \item Comparison of three architectures:
+    \begin{enumerate}
+        \item Centralized fog (single controller, static routing, no AI)
+        \item Distributed fog without AI (rule-based load balancing)
+        \item Distributed fog with AI (adaptive, predictive, anomaly-aware)
+    \end{enumerate}
+\end{itemize}
+
+\section{System Architecture}
+
+\subsection{Network Topology}
+\begin{itemize}
+    \item \textbf{Topology Type}: Distributed mesh network
+    \item \textbf{Fog Nodes}: Minimum 4-6 nodes for meaningful distributed behavior
+    \item \textbf{IoT Devices}: Multiple IoT devices generating traffic
+    \item \textbf{Cloud Layer}: Used only for monitoring and historical analysis (excluded from real-time decision-making)
+    \item \textbf{Inter-node Communication}: gRPC for fog-to-fog communication
+    \item \textbf{IoT Communication}: MQTT protocol
+\end{itemize}
+
+\subsection{Technology Stack}
+
+\subsubsection{Network Emulation}
+\begin{itemize}
+    \item \textbf{Fogbed}: Container-based network emulation (Containernet + Mininet)
+    \item \textbf{Open vSwitch}: Virtual switch for SDN
+    \item \textbf{OpenFlow}: Protocol version 1.3 or 1.5
+    \item \textbf{Ryu SDN Controller}: Python-based SDN controller
+\end{itemize}
+
+\subsubsection{Communication Protocols}
+\begin{itemize}
+    \item \textbf{MQTT}: IoT device messaging (Eclipse Mosquitto broker)
+    \item \textbf{gRPC}: Inter-fog node communication (Protocol Buffers)
+    \item \textbf{REST API}: Optional for management interfaces
+\end{itemize}
+
+\subsubsection{AI/ML Components}
+\begin{itemize}
+    \item \textbf{LSTM}: PyTorch or TensorFlow for load prediction
+    \item \textbf{Autoencoder}: PyTorch or TensorFlow for anomaly detection
+    \item \textbf{Reinforcement Learning}: Stable-Baselines3 or custom DQN implementation
+\end{itemize}
+
+\subsubsection{Monitoring \& Metrics}
+\begin{itemize}
+    \item \textbf{Prometheus}: Time-series metrics collection
+    \item \textbf{Grafana}: Visualization and dashboards
+    \item \textbf{Custom Exporters}: For fog node metrics (CPU, memory, network, latency)
+\end{itemize}
+
+\subsubsection{Programming Languages}
+\begin{itemize}
+    \item \textbf{Python 3.8+}: Primary language for controllers, AI components, and orchestration
+    \item \textbf{Bash}: Scripts for deployment and automation
+\end{itemize}
+
+\section{Component Specifications}
+
+\subsection{Fog Node Components}
+
+Each fog node implements:
+
+\subsubsection{Load Monitor}
+\begin{itemize}
+    \item Collects real-time metrics: CPU usage, memory usage, network bandwidth, active connections
+    \item Sampling interval: 1-5 seconds
+    \item Exports metrics to Prometheus
+\end{itemize}
+
+\subsubsection{LSTM Load Predictor}
+\begin{itemize}
+    \item Input: Historical load metrics (time window: 60-300 seconds)
+    \item Output: Predicted load for next 10-30 seconds
+    \item Architecture: 2-3 LSTM layers, dropout for regularization
+    \item Training: Online learning with periodic retraining
+    \item Update frequency: Every 10-30 seconds
+\end{itemize}
+
+\subsubsection{Autoencoder Anomaly Detector}
+\begin{itemize}
+    \item Input: Network traffic features (packet rate, flow count, latency, error rate)
+    \item Architecture: Encoder-decoder with bottleneck layer
+    \item Threshold: Reconstruction error threshold for anomaly detection
+    \item Output: Anomaly score (0-1) and binary classification
+    \item Update frequency: Real-time (per packet batch)
+\end{itemize}
+
+\subsubsection{RL Routing Agent}
+\begin{itemize}
+    \item State space: Current node load, predicted load, neighbor node states, anomaly scores
+    \item Action space: Route selection (next hop selection)
+    \item Reward function: Combines latency, load balance, and anomaly avoidance
+    \item Algorithm: DQN (Deep Q-Network) or PPO (Proximal Policy Optimization)
+    \item Update frequency: Per routing decision (every packet or flow)
+\end{itemize}
+
+\subsubsection{gRPC Service}
+\begin{itemize}
+    \item Service definition: Node state exchange, routing queries, load information
+    \item Protocol: Protocol Buffers (protobuf)
+    \item Communication: Asynchronous or synchronous based on requirements
+\end{itemize}
+
+\subsection{SDN Controller (Ryu)}
+
+\subsubsection{OpenFlow Applications}
+\begin{itemize}
+    \item \textbf{Flow Manager}: Installs/modifies flow rules based on routing decisions
+    \item \textbf{Topology Discovery}: Discovers network topology using LLDP
+    \item \textbf{Statistics Collector}: Collects flow statistics for monitoring
+    \item \textbf{Routing Application}: Integrates with fog node AI for routing decisions
+\end{itemize}
+
+\subsubsection{Controller Modes}
+\begin{enumerate}
+    \item \textbf{Centralized Mode}: Single controller makes all routing decisions (Architecture 1)
+    \item \textbf{Distributed Mode}: Each fog node makes local routing decisions (Architectures 2 \& 3)
+\end{enumerate}
+
+\subsection{IoT Traffic Generator}
+
+\subsubsection{Traffic Patterns}
+\begin{itemize}
+    \item \textbf{Periodic}: Regular interval traffic (sensors)
+    \item \textbf{Burst}: Sudden traffic spikes (events)
+    \item \textbf{Variable}: Random intervals with different intensities
+    \item \textbf{Anomalous}: Injected anomalies for testing (DDoS-like, unusual patterns)
+\end{itemize}
+
+\subsubsection{MQTT Topics}
+\begin{itemize}
+    \item \texttt{iot/devices/\{device\_id\}/data}: Sensor data
+    \item \texttt{iot/devices/\{device\_id\}/status}: Device status
+    \item \texttt{fog/nodes/\{node\_id\}/routing}: Routing updates
+\end{itemize}
+
+\section{Architecture Variants}
+
+\subsection{Architecture 1: Centralized Fog}
+\begin{itemize}
+    \item \textbf{Controller}: Single Ryu controller
+    \item \textbf{Routing}: Static or simple shortest-path routing
+    \item \textbf{AI}: None
+    \item \textbf{Decision Making}: Centralized in controller
+    \item \textbf{Load Balancing}: Round-robin or static assignment
+\end{itemize}
+
+\subsection{Architecture 2: Distributed Fog (No AI)}
+\begin{itemize}
+    \item \textbf{Controllers}: Multiple Ryu controllers (one per fog node or shared)
+    \item \textbf{Routing}: Rule-based load balancing
+    \item \textbf{AI}: None
+    \item \textbf{Decision Making}: Distributed, based on local rules
+    \item \textbf{Load Balancing}: Weighted round-robin, least-loaded, or similar heuristics
+\end{itemize}
+
+\subsection{Architecture 3: Distributed Fog (With AI)}
+\begin{itemize}
+    \item \textbf{Controllers}: Multiple Ryu controllers with AI integration
+    \item \textbf{Routing}: AI-driven adaptive routing
+    \item \textbf{AI Components}: LSTM, Autoencoder, RL agent active
+    \item \textbf{Decision Making}: Distributed, AI-enhanced
+    \item \textbf{Load Balancing}: Predictive and anomaly-aware
+\end{itemize}
+
+\section{Performance Metrics}
+
+\subsection{Primary Metrics}
+\begin{itemize}
+    \item \textbf{Latency}: End-to-end packet latency (mean, p50, p95, p99)
+    \item \textbf{Throughput}: Packets/second, bits/second
+    \item \textbf{Load Balance}: Standard deviation of node loads
+    \item \textbf{Anomaly Detection}: Precision, recall, F1-score, detection time
+    \item \textbf{Resource Utilization}: CPU, memory, network bandwidth per node
+\end{itemize}
+
+\subsection{Secondary Metrics}
+\begin{itemize}
+    \item \textbf{Packet Loss}: Percentage of dropped packets
+    \item \textbf{Flow Completion Time}: Time for complete flows
+    \item \textbf{Convergence Time}: Time for system to adapt to changes
+    \item \textbf{AI Model Accuracy}: LSTM prediction error, Autoencoder reconstruction error
+    \item \textbf{RL Performance}: Reward over time, policy convergence
+\end{itemize}
+
+\section{Test Scenarios}
+
+\subsection{Scenario 1: Baseline Performance}
+\begin{itemize}
+    \item Steady-state traffic
+    \item All three architectures
+    \item Measure baseline latency, throughput, load balance
+\end{itemize}
+
+\subsection{Scenario 2: Traffic Burst}
+\begin{itemize}
+    \item Sudden traffic increase (2x, 5x, 10x)
+    \item Measure adaptation time and performance degradation
+    \item Compare predictive capabilities of Architecture 3
+\end{itemize}
+
+\subsection{Scenario 3: Node Failure}
+\begin{itemize}
+    \item Random node failure
+    \item Measure recovery time and routing adaptation
+    \item Test fault tolerance
+\end{itemize}
+
+\subsection{Scenario 4: Anomaly Injection}
+\begin{itemize}
+    \item Inject network anomalies (DDoS, unusual patterns)
+    \item Measure detection accuracy and time
+    \item Test routing adaptation to avoid anomalies
+\end{itemize}
+
+\subsection{Scenario 5: Scalability}
+\begin{itemize}
+    \item Vary number of fog nodes (4, 6, 8, 10)
+    \item Vary number of IoT devices (10, 50, 100, 200)
+    \item Measure performance scaling
+\end{itemize}
+
+\subsection{Scenario 6: Dynamic Load}
+\begin{itemize}
+    \item Variable traffic patterns over time
+    \item Measure long-term performance and stability
+    \item Test AI model adaptation
+\end{itemize}
+
+\section{Implementation Structure}
+
+\subsection{Directory Structure}
+\begin{verbatim}
+project/
+├── technical_sheet.tex
+├── README.md
+├── requirements.txt
+├── docker-compose.yml
+├── scripts/
+│   ├── setup.sh
+│   ├── deploy.sh
+│   └── cleanup.sh
+├── fogbed/
+│   ├── topology.py
+│   └── network_config.py
+├── sdn_controller/
+│   ├── ryu_apps/
+│   │   ├── centralized_controller.py
+│   │   ├── distributed_controller.py
+│   │   └── ai_routing_app.py
+│   └── ofproto/
+│       └── fog_proto.py
+├── fog_nodes/
+│   ├── node_base.py
+│   ├── load_monitor.py
+│   ├── lstm_predictor.py
+│   ├── anomaly_detector.py
+│   ├── rl_agent.py
+│   └── grpc_service.py
+├── iot/
+│   ├── traffic_generator.py
+│   └── mqtt_client.py
+├── monitoring/
+│   ├── prometheus/
+│   │   └── prometheus.yml
+│   ├── grafana/
+│   │   └── dashboards/
+│   └── exporters/
+│       └── fog_exporter.py
+├── ai_models/
+│   ├── lstm/
+│   │   ├── model.py
+│   │   └── train.py
+│   ├── autoencoder/
+│   │   ├── model.py
+│   │   └── train.py
+│   └── rl/
+│       ├── dqn_agent.py
+│       └── environment.py
+├── tests/
+│   ├── test_scenarios.py
+│   └── performance_tests.py
+└── results/
+    ├── metrics/
+    └── logs/
+\end{verbatim}
+
+\section{Deployment Requirements}
+
+\subsection{System Requirements}
+\begin{itemize}
+    \item \textbf{OS}: Linux (Ubuntu 20.04+ recommended)
+    \item \textbf{Python}: 3.8 or higher
+    \item \textbf{Docker}: For containerization (optional but recommended)
+    \item \textbf{Resources}: Minimum 8GB RAM, 4 CPU cores (more for larger topologies)
+\end{itemize}
+
+\subsection{Dependencies}
+\begin{itemize}
+    \item Fogbed/Containernet
+    \item Ryu SDN Framework
+    \item PyTorch or TensorFlow
+    \item Stable-Baselines3 (for RL)
+    \item Prometheus, Grafana
+    \item MQTT broker (Mosquitto)
+    \item gRPC and Protocol Buffers
+    \item NumPy, Pandas, Scikit-learn
+\end{itemize}
+
+\section{Evaluation Criteria}
+
+\subsection{Technical Correctness}
+\begin{itemize}
+    \item Proper SDN implementation with OpenFlow
+    \item Correct fog node communication (gRPC)
+    \item Functional AI components
+    \item Accurate metrics collection
+\end{itemize}
+
+\subsection{Performance Comparison}
+\begin{itemize}
+    \item Quantitative comparison of three architectures
+    \item Statistical significance of results
+    \item Clear performance trade-offs identified
+\end{itemize}
+
+\subsection{Code Quality}
+\begin{itemize}
+    \item Well-structured, modular code
+    \item Documentation and comments
+    \item Reproducible experiments
+    \item Error handling and logging
+\end{itemize}
+
+\section{Timeline \& Milestones}
+
+\begin{enumerate}
+    \item \textbf{Week 1-2}: Environment setup, Fogbed topology implementation
+    \item \textbf{Week 3-4}: SDN controller implementation (all three variants)
+    \item \textbf{Week 5-6}: AI components implementation (LSTM, Autoencoder, RL)
+    \item \textbf{Week 7-8}: Integration and testing
+    \item \textbf{Week 9-10}: Performance evaluation and comparison
+    \item \textbf{Week 11-12}: Documentation and finalization
+\end{enumerate}
+
+\section{Deliverables}
+
+\begin{itemize}
+    \item Complete source code with documentation
+    \item Technical specification (this document)
+    \item Performance evaluation report with metrics
+    \item Deployment instructions and scripts
+    \item Test scenarios and results
+    \item Comparison analysis of three architectures
+\end{itemize}
+
+\end{document}
+

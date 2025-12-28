@@ -1,0 +1,39 @@
+"""
+Network Configuration for Fog Computing Topology
+"""
+
+# Network addressing
+FOG_NETWORK = '10.0.0.0/24'
+IOT_NETWORK = '10.0.1.0/24'
+CLOUD_NETWORK = '10.0.2.0/24'
+
+# Default topology parameters
+DEFAULT_NUM_FOG_NODES = 6
+DEFAULT_NUM_IOT_DEVICES = 20
+
+# Link characteristics
+FOG_TO_FOG_BANDWIDTH = 100  # Mbps
+FOG_TO_FOG_DELAY = '5ms'
+FOG_TO_IOT_BANDWIDTH = 10   # Mbps
+FOG_TO_IOT_DELAY = '2ms'
+FOG_TO_CLOUD_BANDWIDTH = 100  # Mbps
+FOG_TO_CLOUD_DELAY = '10ms'
+
+# OpenFlow settings
+OPENFLOW_VERSION = 'OpenFlow13'
+CONTROLLER_IP = '127.0.0.1'
+CONTROLLER_PORT = 6633
+
+# Container resources
+FOG_NODE_CPU_QUOTA = 50000  # 50% CPU
+FOG_NODE_MEM_LIMIT = '512m'
+IOT_DEVICE_CPU_QUOTA = 10000  # 10% CPU
+IOT_DEVICE_MEM_LIMIT = '128m'
+CLOUD_CPU_QUOTA = 20000
+CLOUD_MEM_LIMIT = '256m'
+
+# Architecture types
+ARCHITECTURE_CENTRALIZED = 'centralized'
+ARCHITECTURE_DISTRIBUTED_NO_AI = 'distributed_no_ai'
+ARCHITECTURE_DISTRIBUTED_AI = 'distributed_ai'
+

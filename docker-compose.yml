@@ -1,0 +1,57 @@
+version: '3.8'
+
+services:
+  # MQTT Broker
+  mosquitto:
+    image: eclipse-mosquitto:latest
+    container_name: fog-mosquitto
+    ports:
+      - "1883:1883"
+      - "9001:9001"
+    volumes:
+      - ./mosquitto/config:/mosquitto/config
+      - ./mosquitto/data:/mosquitto/data
+      - ./mosquitto/log:/mosquitto/log
+    networks:
+      - fog-network
+
+  # Prometheus
+  prometheus:
+    image: prom/prometheus:latest
+    container_name: fog-prometheus
+    ports:
+      - "9090:9090"
+    volumes:
+      - ./monitoring/prometheus/prometheus.yml:/etc/prometheus/prometheus.yml
+      - prometheus-data:/prometheus
+    command:
+      - '--config.file=/etc/prometheus/prometheus.yml'
+      - '--storage.tsdb.path=/prometheus'
+    networks:
+      - fog-network
+
+  # Grafana
+  grafana:
+    image: grafana/grafana:latest
+    container_name: fog-grafana
+    ports:
+      - "3000:3000"
+    environment:
+      - GF_SECURITY_ADMIN_PASSWORD=admin
+      - GF_USERS_ALLOW_SIGN_UP=false
+    volumes:
+      - grafana-data:/var/lib/grafana
+      - ./monitoring/grafana/dashboards:/etc/grafana/provisioning/dashboards
+    depends_on:
+      - prometheus
+    networks:
+      - fog-network
+
+volumes:
+  prometheus-data:
+  grafana-data:
+
+networks:
+  fog-network:
+    driver: bridge
+

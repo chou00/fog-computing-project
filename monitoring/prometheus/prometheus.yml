@@ -1,0 +1,58 @@
+# Prometheus Configuration for Fog Computing Monitoring
+
+global:
+  scrape_interval: 5s      # Scrape targets every 5 seconds
+  evaluation_interval: 5s   # Evaluate rules every 5 seconds
+  external_labels:
+    cluster: 'fog-computing'
+    environment: 'development'
+
+# Scrape configurations
+scrape_configs:
+  # Fog node metrics
+  - job_name: 'fog-nodes'
+    static_configs:
+      - targets:
+        - 'fog1:9090'
+        - 'fog2:9090'
+        - 'fog3:9090'
+        - 'fog4:9090'
+        - 'fog5:9090'
+        - 'fog6:9090'
+    metrics_path: '/metrics'
+    scrape_interval: 5s
+
+  # SDN Controller metrics
+  - job_name: 'sdn-controller'
+    static_configs:
+      - targets:
+        - 'controller:9090'
+    metrics_path: '/metrics'
+    scrape_interval: 5s
+
+  # IoT device metrics
+  - job_name: 'iot-devices'
+    static_configs:
+      - targets:
+        - 'iot1:9090'
+        - 'iot2:9090'
+    metrics_path: '/metrics'
+    scrape_interval: 10s
+
+  # Prometheus itself
+  - job_name: 'prometheus'
+    static_configs:
+      - targets:
+        - 'localhost:9090'
+
+# Alerting rules (optional)
+rule_files:
+  # - "alerts.yml"
+
+# Alertmanager configuration (optional)
+# alerting:
+#   alertmanagers:
+#     - static_configs:
+#         - targets:
+#           - 'alertmanager:9093'
+

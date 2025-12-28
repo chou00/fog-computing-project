@@ -1,0 +1,62 @@
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+venv/
+env/
+ENV/
+.venv
+
+# IDEs
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+
+# Project specific
+results/
+data/
+*.log
+*.pid
+
+# Models and checkpoints
+*.pth
+*.pt
+*.h5
+*.ckpt
+*.pb
+
+# Docker
+*.tar
+docker-compose.override.yml
+
+# OS
+.DS_Store
+Thumbs.db
+
+# LaTeX
+*.aux
+*.log
+*.out
+*.toc
+*.synctex.gz
+
+# Generated files
+*_pb2.py
+*_pb2_grpc.py
+
+# Test outputs
+.pytest_cache/
+.coverage
+htmlcov/
+
+# Jupyter
+.ipynb_checkpoints/
+
+# Environment variables
+.env
+.env.local
+
