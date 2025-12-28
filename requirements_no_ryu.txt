@@ -1,14 +1,10 @@
+# Requirements without Ryu (for after Ryu is installed manually)
+# Use this after running: bash scripts/install_ryu_fix.sh
+
 # Core Dependencies
 numpy>=1.21.0
 pandas>=1.3.0
 scipy>=1.7.0
-
-# SDN and Networking
-# Note: Ryu must be installed separately using scripts/install_ryu_fix.sh
-# ryu>=4.34  # Install manually - see INSTALL_RYU_KALI.md
-# ovs>=2.17.0  # Already installed with Ryu dependencies
-# mininet>=2.3.0  # Install via apt: sudo apt install mininet
-# containernet>=2.3.0  # Install via apt or pip separately
 
 # AI/ML Frameworks
 torch>=1.11.0
@@ -39,3 +35,4 @@ pytest-cov>=3.0.0
 
 # Logging
 loguru>=0.6.0
+
